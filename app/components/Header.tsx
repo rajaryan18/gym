@@ -1,7 +1,11 @@
 import React from "react";
-import { Dumbbell, Save } from "lucide-react";
+import { Dumbbell, Plus } from "lucide-react";
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+    onAddSessionClick?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onAddSessionClick }) => {
     return (
         <header className="mb-12 flex items-center justify-between">
             <div>
@@ -14,10 +18,12 @@ export const Header: React.FC = () => {
                 <p className="text-zinc-500 font-medium">Track your progress, build your legacy.</p>
             </div>
             <button
-                className="p-3 bg-white border border-zinc-200 rounded-full hover:bg-zinc-50 transition-all shadow-sm active:scale-95"
-                aria-label="Save current workout"
+                onClick={onAddSessionClick}
+                className="md:hidden flex items-center justify-center gap-2 px-4 py-3 bg-black text-white rounded-2xl font-bold shadow-lg shadow-black/10 active:scale-95 transition-all"
+                aria-label="Add new session"
             >
-                <Save size={20} className="text-zinc-700" />
+                <Plus size={20} />
+                <span className="text-sm">Add Session</span>
             </button>
         </header>
     );

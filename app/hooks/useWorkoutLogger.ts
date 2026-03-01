@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 export interface Set {
     id: string;
@@ -13,6 +14,7 @@ export interface Exercise {
 }
 
 export const useWorkoutLogger = () => {
+    const { user } = useAuth();
     const [exercises, setExercises] = useState<Exercise[]>([
         {
             id: "1",
@@ -20,6 +22,8 @@ export const useWorkoutLogger = () => {
             sets: [{ id: "s1", weight: "", reps: "" }],
         },
     ]);
+    const [workoutTime, setWorkoutTime] = useState<string>("");
+    const [isSaving, setIsSaving] = useState(false);
 
     const addExercise = () => {
         setExercises([
@@ -96,13 +100,43 @@ export const useWorkoutLogger = () => {
         );
     };
 
+    const saveWorkout = async () => {
+        if (!exercises || exercises.length === 0 || !user?.email) return false;
+
+        setIsSaving(true);
+        try {
+            const res = await fetch('/api/workouts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ exercises, workoutTime, email: user.email })
+            });
+
+            if (res.ok) {
+                // Reset form on success
+                setExercises([{ id: Math.random().toString(36).substr(2, 9), name: "", sets: [{ id: Math.random().toString(36).substr(2, 9), weight: "", reps: "" }] }]);
+                setWorkoutTime("");
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error saving workout:", error);
+            return false;
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     return {
         exercises,
+        workoutTime,
+        isSaving,
+        setWorkoutTime,
         addExercise,
         removeExercise,
         updateExerciseName,
         addSet,
         removeSet,
         updateSet,
+        saveWorkout,
     };
 };
