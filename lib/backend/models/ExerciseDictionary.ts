@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IExerciseDictionary extends Document {
     name: string;
     targetMuscle: string;
-    isCustom: boolean; // True if it's user-added, false if it's a globally seeded default
+    isCustom: boolean; // True if it's user-added, false if it's a predefined default
     createdByEmail?: string; // If 'isCustom' is true, which user owns it
     createdAt: Date;
     updatedAt: Date;

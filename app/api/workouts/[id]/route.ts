@@ -13,7 +13,6 @@ function getIdFromRequest(req: NextRequest) {
 
 export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
-        await db.connect();
         const { id } = await context.params;
 
         const deletedSession = await WorkoutSession.findOneAndDelete({ sessionId: id });
@@ -32,7 +31,6 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
 
 export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
-        await db.connect();
         const { id } = await context.params;
         const body = await req.json();
 

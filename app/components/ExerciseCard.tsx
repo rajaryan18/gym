@@ -4,13 +4,13 @@ import { SetRow } from "./SetRow";
 import { useExerciseLibrary } from "../hooks/useExerciseLibrary";
 
 interface Set {
-    id: string;
+    setId: string;
     weight: string;
     reps: string;
 }
 
 interface Exercise {
-    id: string;
+    exerciseId: string;
     name: string;
     sets: Set[];
 }
@@ -159,12 +159,12 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
 
                 {exercise.sets.map((set, setIndex) => (
                     <SetRow
-                        key={set.id}
+                        key={set.setId}
                         index={setIndex}
                         weight={set.weight}
                         reps={set.reps}
-                        onUpdate={(field, value) => onUpdateSet(set.id, field, value)}
-                        onRemove={() => onRemoveSet(set.id)}
+                        onUpdate={(field, value) => onUpdateSet(set.setId, field, value)}
+                        onRemove={() => onRemoveSet(set.setId)}
                         isOnlySet={exercise.sets.length === 1}
                     />
                 ))}

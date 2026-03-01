@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export interface Set {
-    id: string;
+    setId: string;
     weight: string;
     reps: string;
 }
 
 export interface Exercise {
-    id: string;
+    exerciseId: string;
     name: string;
     sets: Set[];
 }
@@ -17,9 +17,9 @@ export const useWorkoutLogger = () => {
     const { user } = useAuth();
     const [exercises, setExercises] = useState<Exercise[]>([
         {
-            id: "1",
+            exerciseId: "1",
             name: "",
-            sets: [{ id: "s1", weight: "", reps: "" }],
+            sets: [{ setId: "s1", weight: "", reps: "" }],
         },
     ]);
     const [workoutTime, setWorkoutTime] = useState<string>("");
@@ -29,33 +29,33 @@ export const useWorkoutLogger = () => {
         setExercises([
             ...exercises,
             {
-                id: Math.random().toString(36).substr(2, 9),
+                exerciseId: Math.random().toString(36).substr(2, 9),
                 name: "",
-                sets: [{ id: Math.random().toString(36).substr(2, 9), weight: "", reps: "" }],
+                sets: [{ setId: Math.random().toString(36).substr(2, 9), weight: "", reps: "" }],
             },
         ]);
     };
 
-    const removeExercise = (id: string) => {
-        setExercises(exercises.filter((ex) => ex.id !== id));
+    const removeExercise = (exerciseId: string) => {
+        setExercises(exercises.filter((ex) => ex.exerciseId !== exerciseId));
     };
 
-    const updateExerciseName = (id: string, name: string) => {
+    const updateExerciseName = (exerciseId: string, name: string) => {
         setExercises(
-            exercises.map((ex) => (ex.id === id ? { ...ex, name } : ex))
+            exercises.map((ex) => (ex.exerciseId === exerciseId ? { ...ex, name } : ex))
         );
     };
 
     const addSet = (exerciseId: string) => {
         setExercises(
             exercises.map((ex) => {
-                if (ex.id === exerciseId) {
+                if (ex.exerciseId === exerciseId) {
                     return {
                         ...ex,
                         sets: [
                             ...ex.sets,
                             {
-                                id: Math.random().toString(36).substr(2, 9),
+                                setId: Math.random().toString(36).substr(2, 9),
                                 weight: "",
                                 reps: "",
                             },
@@ -70,10 +70,10 @@ export const useWorkoutLogger = () => {
     const removeSet = (exerciseId: string, setId: string) => {
         setExercises(
             exercises.map((ex) => {
-                if (ex.id === exerciseId) {
+                if (ex.exerciseId === exerciseId) {
                     return {
                         ...ex,
-                        sets: ex.sets.filter((s) => s.id !== setId),
+                        sets: ex.sets.filter((s) => s.setId !== setId),
                     };
                 }
                 return ex;
@@ -89,10 +89,10 @@ export const useWorkoutLogger = () => {
     ) => {
         setExercises(
             exercises.map((ex) => {
-                if (ex.id === exerciseId) {
+                if (ex.exerciseId === exerciseId) {
                     return {
                         ...ex,
-                        sets: ex.sets.map((s) => (s.id === setId ? { ...s, [field]: value } : s)),
+                        sets: ex.sets.map((s) => (s.setId === setId ? { ...s, [field]: value } : s)),
                     };
                 }
                 return ex;
@@ -108,13 +108,23 @@ export const useWorkoutLogger = () => {
             const res = await fetch('/api/workouts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ exercises, workoutTime, email: user.email })
+                body: JSON.stringify({
+                    exercises,
+                    workoutTime,
+                    email: user.email,
+                    userId: user.userId
+                })
             });
 
             if (res.ok) {
                 // Reset form on success
-                setExercises([{ id: Math.random().toString(36).substr(2, 9), name: "", sets: [{ id: Math.random().toString(36).substr(2, 9), weight: "", reps: "" }] }]);
+                setExercises([{
+                    exerciseId: Math.random().toString(36).substr(2, 9),
+                    name: "",
+                    sets: [{ setId: Math.random().toString(36).substr(2, 9), weight: "", reps: "" }]
+                }]);
                 setWorkoutTime("");
+                window.dispatchEvent(new CustomEvent('gym:workout_updated'));
                 return true;
             }
             return false;

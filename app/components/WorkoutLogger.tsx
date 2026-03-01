@@ -45,13 +45,13 @@ export const WorkoutLogger: React.FC<WorkoutLoggerProps> = ({ onClose }) => {
             <div className="flex-1 overflow-y-auto pr-2 space-y-8 custom-scrollbar pb-12">
                 {exercises.map((exercise) => (
                     <ExerciseCard
-                        key={exercise.id}
+                        key={exercise.exerciseId}
                         exercise={exercise}
-                        onUpdateName={(name) => updateExerciseName(exercise.id, name)}
-                        onRemove={() => removeExercise(exercise.id)}
-                        onAddSet={() => addSet(exercise.id)}
-                        onUpdateSet={(setId, field, value) => updateSet(exercise.id, setId, field, value)}
-                        onRemoveSet={(setId) => removeSet(exercise.id, setId)}
+                        onUpdateName={(name) => updateExerciseName(exercise.exerciseId, name)}
+                        onRemove={() => removeExercise(exercise.exerciseId)}
+                        onAddSet={() => addSet(exercise.exerciseId)}
+                        onUpdateSet={(setId, field, value) => updateSet(exercise.exerciseId, setId, field, value)}
+                        onRemoveSet={(setId) => removeSet(exercise.exerciseId, setId)}
                         isOnlyExercise={exercises.length === 1}
                     />
                 ))}

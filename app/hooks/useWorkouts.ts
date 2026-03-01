@@ -26,6 +26,13 @@ export const useWorkouts = () => {
 
     useEffect(() => {
         fetchWorkouts();
+
+        const handleUpdate = () => {
+            fetchWorkouts();
+        };
+
+        window.addEventListener('gym:workout_updated', handleUpdate);
+        return () => window.removeEventListener('gym:workout_updated', handleUpdate);
     }, [fetchWorkouts, user?.email]);
 
     const deleteWorkout = async (id: string) => {
@@ -36,6 +43,7 @@ export const useWorkouts = () => {
             if (res.ok) {
                 // Optimistic UI update
                 setWorkouts(workouts.filter(w => w.sessionId !== id));
+                window.dispatchEvent(new CustomEvent('gym:workout_updated'));
                 return true;
             }
             return false;
@@ -45,10 +53,29 @@ export const useWorkouts = () => {
         }
     };
 
+    const updateWorkout = async (id: string, data: any) => {
+        try {
+            const res = await fetch(`/api/workouts/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (res.ok) {
+                window.dispatchEvent(new CustomEvent('gym:workout_updated'));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error updating workout:", error);
+            return false;
+        }
+    };
+
     return {
         workouts,
         isLoading,
         fetchWorkouts,
-        deleteWorkout
+        deleteWorkout,
+        updateWorkout
     };
 };

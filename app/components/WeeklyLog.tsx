@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Calendar, ChevronRight, Loader2, Trash2 } from "lucide-react";
 import { useWorkouts } from "../hooks/useWorkouts";
-
-// We are removing DUMMY_LOGS in favor of real DB data.
+import { WorkoutDetails } from "./WorkoutDetails";
 
 export const WeeklyLog: React.FC = () => {
     const { workouts, isLoading, deleteWorkout } = useWorkouts();
+    const [selectedWorkout, setSelectedWorkout] = useState<any | null>(null);
 
     return (
         <div className="flex flex-col h-full">
@@ -30,6 +30,7 @@ export const WeeklyLog: React.FC = () => {
                     return (
                         <div
                             key={log.sessionId}
+                            onClick={() => setSelectedWorkout(log)}
                             className="group bg-white border border-zinc-100 rounded-2xl p-4 hover:border-zinc-300 transition-all cursor-pointer shadow-sm hover:shadow-md relative"
                         >
                             <div className="flex justify-between items-start mb-2 pr-8">
@@ -59,6 +60,13 @@ export const WeeklyLog: React.FC = () => {
                     );
                 })}
             </div>
+
+            {selectedWorkout && (
+                <WorkoutDetails
+                    workout={selectedWorkout}
+                    onClose={() => setSelectedWorkout(null)}
+                />
+            )}
         </div>
     );
 };

@@ -17,6 +17,10 @@ export class DatabaseFactory {
                 default:
                     logger.info("Initializing MongoDB Strategy through Factory.");
                     this.instance = new MongoDBStrategy();
+                    // Proactively connect
+                    this.instance.connect().catch(err => {
+                        logger.error("Initial database connection failed", err);
+                    });
                     break;
             }
         }

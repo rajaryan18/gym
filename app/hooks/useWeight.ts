@@ -1,31 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export const useWeight = () => {
     const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [weightHistory, setWeightHistory] = useState<any[]>([]);
-
-    const saveWeight = async (weight: number) => {
-        if (!user?.email) return false;
-
-        setIsLoading(true);
-        try {
-            const res = await fetch('/api/weight', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ weight, email: user.email })
-            });
-            return res.ok;
-        } catch (error) {
-            console.error("Error saving weight:", error);
-            return false;
-        } finally {
-            setIsLoading(false);
-            // Refresh history after save
-            fetchWeightHistory();
-        }
-    };
 
     const fetchWeightHistory = useCallback(async () => {
         if (!user?.email) return;
@@ -40,10 +19,42 @@ export const useWeight = () => {
         }
     }, [user?.email]);
 
+    useEffect(() => {
+        fetchWeightHistory();
+    }, [fetchWeightHistory]);
+
+    const saveWeight = async (weight: number) => {
+        if (!user?.email) return false;
+
+        setIsLoading(true);
+        try {
+            const res = await fetch('/api/weight', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ weight, email: user.email })
+            });
+            if (res.ok) {
+                await fetchWeightHistory();
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error saving weight:", error);
+            return false;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const latestWeight = weightHistory.length > 0
+        ? weightHistory[weightHistory.length - 1].weight
+        : null;
+
     return {
         saveWeight,
         fetchWeightHistory,
         weightHistory,
+        latestWeight,
         isLoading
     };
 };

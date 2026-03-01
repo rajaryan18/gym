@@ -6,8 +6,6 @@ const db = DatabaseFactory.getDatabase();
 
 export async function GET(req: NextRequest) {
     try {
-        await db.connect();
-
         const url = new URL(req.url);
         const email = url.searchParams.get("email");
 
@@ -28,7 +26,6 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        await db.connect();
 
         const body = await req.json();
 

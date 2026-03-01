@@ -10,7 +10,6 @@ const db = DatabaseFactory.getDatabase();
 
 export async function POST(req: NextRequest) {
     try {
-        await db.connect();
         const { email, name, password } = await req.json();
 
         if (!email || !password) {
@@ -40,7 +39,7 @@ export async function POST(req: NextRequest) {
         );
 
         return NextResponse.json({
-            user: { email: newUser.email, name: newUser.name, token }
+            user: { userId: newUser._id, email: newUser.email, name: newUser.name, token }
         }, { status: 201 });
 
     } catch (error) {

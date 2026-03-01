@@ -3,15 +3,15 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-interface User {
+export interface User {
+    userId: string;
     email: string;
+    token: string;
     name?: string;
-    token?: string;
-    expiryDate?: number;
 }
 
 interface AuthContextType {
-    user: User | null;
+    user: (User & { expiryDate?: number }) | null;
     isLoading: boolean;
     login: (userData: User) => void;
     logout: () => void;
