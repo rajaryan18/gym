@@ -21,7 +21,7 @@ export default function GymHome() {
 
         <div className="flex flex-col md:flex-row gap-4 md:gap-12 flex-1 md:overflow-hidden mt-2 md:mt-0">
           {/* Left Column: Stats & Tracking */}
-          <aside className="w-full md:w-[45%] flex flex-col gap-4 md:min-h-0">
+          <aside className="w-full md:w-[45%] flex flex-col gap-4 md:min-h-0 md:overflow-y-auto custom-scrollbar pr-2">
             <WeightTracker />
 
             <div className="bg-white border border-zinc-100 rounded-3xl p-2 shadow-sm flex items-center justify-between">
